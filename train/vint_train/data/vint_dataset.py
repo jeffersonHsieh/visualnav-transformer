@@ -239,9 +239,9 @@ class ViNT_Dataset(Dataset):
     def _compute_actions(self, traj_data, curr_time, goal_time):
         start_index = curr_time
         end_index = curr_time + self.len_traj_pred * self.waypoint_spacing + 1
-        yaw = traj_data["yaw"][start_index:end_index:self.waypoint_spacing]
-        positions = traj_data["position"][start_index:end_index:self.waypoint_spacing]
-        goal_pos = traj_data["position"][min(goal_time, len(traj_data["position"]) - 1)]
+        yaw = traj_data["yaw"][start_index:end_index:self.waypoint_spacing].astype(float)
+        positions = traj_data["position"][start_index:end_index:self.waypoint_spacing].astype(float)
+        goal_pos = traj_data["position"][min(goal_time, len(traj_data["position"]) - 1)].astype(float)
 
         if len(yaw.shape) == 2:
             yaw = yaw.squeeze(1)
@@ -258,7 +258,7 @@ class ViNT_Dataset(Dataset):
         goal_pos = to_local_coords(goal_pos, positions[0], yaw[0])
 
         assert waypoints.shape == (self.len_traj_pred + 1, 2), f"{waypoints.shape} and {(self.len_traj_pred + 1, 2)} should be equal"
-
+        # import pdb;pdb.set_trace()
         if self.learn_angle:
             yaw = yaw[1:] - yaw[0]
             actions = np.concatenate([waypoints[1:], yaw[:, None]], axis=-1)
@@ -332,6 +332,7 @@ class ViNT_Dataset(Dataset):
         assert goal_time < goal_traj_len, f"{goal_time} an {goal_traj_len}"
 
         # Compute actions
+        # import pdb;pdb.set_trace()
         actions, goal_pos = self._compute_actions(curr_traj_data, curr_time, goal_time)
         
         # Compute distances

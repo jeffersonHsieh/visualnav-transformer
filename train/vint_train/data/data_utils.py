@@ -48,7 +48,8 @@ def to_local_coords(
     Returns:
         np.ndarray: positions in local coordinates
     """
-    rotmat = yaw_rotmat(curr_yaw)
+    # import pdb;pdb.set_trace()
+    rotmat = yaw_rotmat(float(curr_yaw))
     if positions.shape[-1] == 2:
         rotmat = rotmat[:2, :2]
     elif positions.shape[-1] == 3:
